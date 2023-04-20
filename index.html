@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Image Search Tool</title>
+	<link rel="stylesheet" href="style.css">
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+	<div class="container">
+		<h1>Image Search Tool</h1>
+		<form onsubmit="searchImages(event)">
+			<label for="search">Enter search queries (separated by colons):</label>
+			<input type="text" id="search" name="search" required>
+			<button type="submit">Go</button>
+		</form>
+		<div id="results">
+			<!-- Results will be displayed here -->
+		</div>
+	</div>
+	<script src="script.js"></script>
+</body>
+</html>
