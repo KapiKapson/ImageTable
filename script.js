@@ -1,43 +1,40 @@
-const form = document.querySelector('form');
-const queries = document.querySelector('#queries');
-const submit = document.querySelector('#submit');
-const results = document.querySelector('#results');
+function searchImages(event) {
+  event.preventDefault();
+  let search = document.getElementById('search').value.trim();
+  let queries = search.split(',');
 
-submit.addEventListener('click', e => {
-  e.preventDefault();
-  
-  // Split queries by colons
-  const queryList = queries.value.split(':').map(q => q.trim());
-  
-  // Clear results div
-  results.innerHTML = '';
-  
-  // Loop through each query and fetch image
-  queryList.forEach(query => {
-    fetch(`https://www.google.com/search?q=${query}&tbm=isch`)
+  let results = '';
+  for (let query of queries) {
+    query = query.trim();
+    let url = `https://www.google.com/search?q=${query}&tbm=isch&tbo=u&source=univ&sa=X&ved=0ahUKEwi0gYz-1Y7tAhXSK80KHdCtDkoQsAQINQ&biw=1920&bih=969`;
+    fetch(url)
       .then(response => response.text())
-      .then(text => {
-        const parser = new DOMParser();
-        const htmlDoc = parser.parseFromString(text, 'text/html');
-        const imgSrc = htmlDoc.querySelector('img').src;
-        
-        // Add query and image to results table
-        const row = document.createElement('tr');
-        const queryCell = document.createElement('td');
-        const imgCell = document.createElement('td');
-        const img = document.createElement('img');
-        
-        queryCell.textContent = query;
-        img.src = imgSrc;
-        imgCell.appendChild(img);
-        
-        row.appendChild(queryCell);
-        row.appendChild(imgCell);
-        
-        results.appendChild(row);
+      .then(data => {
+        let doc = new DOMParser().parseFromString(data, 'text/html');
+        let imageURL = doc.querySelector('img').getAttribute('src');
+
+        let tableRow = `
+          <tr>
+            <td>${query}</td>
+            <td><img src="${imageURL}" alt="${query}"></td>
+          </tr>
+        `;
+        results += tableRow;
+
+        document.getElementById('results').innerHTML = `
+          <table>
+            <thead>
+              <tr>
+                <th>Search Query</th>
+                <th>Image</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${results}
+            </tbody>
+          </table>
+        `;
       })
-      .catch(error => {
-        console.error(`Error fetching image for query "${query}":`, error);
-      });
-  });
-});
+      .catch(error => console.error(error));
+  }
+}
